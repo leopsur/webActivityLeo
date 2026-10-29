@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # 1. Base de datos MariaDB (Actividades)
+  mariadb:
+    image: mariadb:10.11
+    container_name: activity_mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: activityleo_mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./database/init_mariadb.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # 2. Base de datos MySQL (Alumnos) - Mapeado al puerto 3310
+  mysql:
+    image: mysql:8.0
+    container_name: activity_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: activityleo_mysql
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./database/init_mysql.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # 3. Base de datos PostgreSQL (Profesores)
+  postgres:
+    image: postgres:15-alpine
+    container_name: activity_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: activityleo_postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init_postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+
+  # 4. Capa de Analítica / Cache (Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: activity_redis
+    ports:
+      - "6379:6379"
+
+  # 5. Backend API Python (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: activity_backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mariadb
+      - mysql
+      - postgres
+      - redis
+
+  # 6. Frontend Nginx SPA
+  frontend:
+    image: nginx:alpine
+    container_name: activity_frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/index.html:/usr/share/nginx/html/index.html:ro
+    depends_on:
+      - backend

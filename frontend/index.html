@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>webActivityLeo - Dashboard Multi-DB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+    <!-- Navbar -->
+    <nav class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-cubes text-indigo-400 text-2xl"></i>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                webActivityLeo
+            </h1>
+        </div>
+        <div class="flex space-x-2 mt-4 sm:mt-0">
+            <button onclick="switchTab('mariadb')" id="btn-mariadb" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-indigo-600 text-white shadow">
+                <i class="fa-solid fa-calendar-check mr-2"></i>MariaDB (Actividades)
+            </button>
+            <button onclick="switchTab('mysql')" id="btn-mysql" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600">
+                <i class="fa-solid fa-user-graduate mr-2"></i>MySQL (Alumnos)
+            </button>
+            <button onclick="switchTab('postgres')" id="btn-postgres" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600">
+                <i class="fa-solid fa-chalkboard-user mr-2"></i>PostgreSQL (Profesores)
+            </button>
+            <button onclick="switchTab('analitica')" id="btn-analitica" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600">
+                <i class="fa-solid fa-chart-pie mr-2"></i>Analítica (Redis)
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto p-6">
+
+        <!-- TAB MARIADB -->
+        <section id="tab-mariadb" class="space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Actividades (MariaDB)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Gestión de actividades extracurriculares</p>
+                </div>
+                <button onclick="openModal('mariadb')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow">
+                    <i class="fa-solid fa-plus mr-2"></i>Nueva Actividad
+                </button>
+            </div>
+            <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-700/50 text-slate-300 text-xs font-semibold uppercase">
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Nombre</th>
+                            <th class="p-4">Categoría</th>
+                            <th class="p-4">Cupo</th>
+                            <th class="p-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-mariadb" class="divide-y divide-slate-700 text-sm"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB MYSQL -->
+        <section id="tab-mysql" class="space-y-6 hidden">
+            <div class="flex justify-between items-center bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Alumnos (MySQL)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Gestión de estudiantes matriculados</p>
+                </div>
+                <button onclick="openModal('mysql')" class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow">
+                    <i class="fa-solid fa-plus mr-2"></i>Nuevo Alumno
+                </button>
+            </div>
+            <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-700/50 text-slate-300 text-xs font-semibold uppercase">
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Nombre Completo</th>
+                            <th class="p-4">Email</th>
+                            <th class="p-4">Grado</th>
+                            <th class="p-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-mysql" class="divide-y divide-slate-700 text-sm"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB POSTGRESQL -->
+        <section id="tab-postgres" class="space-y-6 hidden">
+            <div class="flex justify-between items-center bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Profesores (PostgreSQL)</h2>
+                    <p class="text-sm text-slate-400 mt-1">Gestión de la comunidad docente</p>
+                </div>
+                <button onclick="openModal('postgres')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center shadow">
+                    <i class="fa-solid fa-plus mr-2"></i>Nuevo Profesor
+                </button>
+            </div>
+            <div class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-700/50 text-slate-300 text-xs font-semibold uppercase">
+                            <th class="p-4">ID</th>
+                            <th class="p-4">Nombre Completo</th>
+                            <th class="p-4">Especialidad</th>
+                            <th class="p-4">Departamento</th>
+                            <th class="p-4 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbl-postgres" class="divide-y divide-slate-700 text-sm"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TAB ANALÍTICA -->
+        <section id="tab-analitica" class="space-y-6 hidden">
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <h2 class="text-2xl font-bold text-slate-100">Métricas & Redis Cache</h2>
+                <p class="text-sm text-slate-400 mt-1">Resumen centralizado en tiempo real</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+                    <p class="text-sm text-slate-400">MariaDB Actividades</p>
+                    <h3 id="stat-actividades" class="text-3xl font-bold text-indigo-400 mt-2">0</h3>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+                    <p class="text-sm text-slate-400">MySQL Alumnos</p>
+                    <h3 id="stat-alumnos" class="text-3xl font-bold text-cyan-400 mt-2">0</h3>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+                    <p class="text-sm text-slate-400">PostgreSQL Profesores</p>
+                    <h3 id="stat-profesores" class="text-3xl font-bold text-emerald-400 mt-2">0</h3>
+                </div>
+                <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg">
+                    <p class="text-sm text-slate-400">Redis Cache Status</p>
+                    <h3 id="stat-cache" class="text-xl font-bold text-emerald-400 mt-2 flex items-center">
+                        <span class="w-3 h-3 bg-emerald-500 rounded-full animate-ping mr-2"></span> ACTIVADO
+                    </h3>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Universal -->
+    <div id="modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 id="modal-title" class="font-bold text-lg text-slate-100">Formulario</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="modal-form" onsubmit="saveData(event)" class="p-6 space-y-4">
+                <input type="hidden" id="form-target">
+                <input type="hidden" id="form-id">
+                <div id="form-fields" class="space-y-4"></div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-700">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:8000/api";
+
+        function switchTab(tab) {
+            ['mariadb', 'mysql', 'postgres', 'analitica'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`btn-${t}`).className = "px-4 py-2 rounded-lg text-sm font-medium transition bg-slate-700 text-slate-300 hover:bg-slate-600";
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`btn-${tab}`).className = "px-4 py-2 rounded-lg text-sm font-medium transition bg-indigo-600 text-white shadow";
+
+            if (tab === 'mariadb') loadMariaDB();
+            if (tab === 'mysql') loadMySQL();
+            if (tab === 'postgres') loadPostgreSQL();
+            if (tab === 'analitica') loadStats();
+        }
+
+        async function loadMariaDB() {
+            try {
+                const res = await fetch(`${API_URL}/mariadb/actividades`);
+                const data = await res.json();
+                document.getElementById('tbl-mariadb').innerHTML = data.map(item => `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="p-4 font-mono text-indigo-400">#${item.id}</td>
+                        <td class="p-4 font-semibold">${item.nombre}</td>
+                        <td class="p-4"><span class="bg-indigo-500/10 text-indigo-400 px-2 py-1 rounded text-xs">${item.categoria}</span></td>
+                        <td class="p-4">${item.cupo} plazas</td>
+                        <td class="p-4 text-center space-x-2">
+                            <button onclick="editItem('mariadb', ${item.id})" class="text-amber-400"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('mariadb', 'actividades', ${item.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadMySQL() {
+            try {
+                const res = await fetch(`${API_URL}/mysql/alumnos`);
+                const data = await res.json();
+                document.getElementById('tbl-mysql').innerHTML = data.map(item => `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="p-4 font-mono text-cyan-400">#${item.id}</td>
+                        <td class="p-4 font-semibold">${item.nombre}</td>
+                        <td class="p-4">${item.email}</td>
+                        <td class="p-4"><span class="bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded text-xs">${item.grado}</span></td>
+                        <td class="p-4 text-center space-x-2">
+                            <button onclick="editItem('mysql', ${item.id})" class="text-amber-400"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('mysql', 'alumnos', ${item.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadPostgreSQL() {
+            try {
+                const res = await fetch(`${API_URL}/postgres/profesores`);
+                const data = await res.json();
+                document.getElementById('tbl-postgres').innerHTML = data.map(item => `
+                    <tr class="hover:bg-slate-700/30">
+                        <td class="p-4 font-mono text-emerald-400">#${item.id}</td>
+                        <td class="p-4 font-semibold">${item.nombre}</td>
+                        <td class="p-4">${item.especialidad}</td>
+                        <td class="p-4"><span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs">${item.departamento}</span></td>
+                        <td class="p-4 text-center space-x-2">
+                            <button onclick="editItem('postgres', ${item.id})" class="text-amber-400"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('postgres', 'profesores', ${item.id})" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API_URL}/redis/stats`);
+                const data = await res.json();
+                document.getElementById('stat-actividades').innerText = data.actividades_count;
+                document.getElementById('stat-alumnos').innerText = data.alumnos_count;
+                document.getElementById('stat-profesores').innerText = data.profesores_count;
+            } catch (e) { console.error(e); }
+        }
+
+        function openModal(target, data = {}) {
+            document.getElementById('form-target').value = target;
+            document.getElementById('form-id').value = data.id || '';
+            const fields = document.getElementById('form-fields');
+
+            if (target === 'mariadb') {
+                document.getElementById('modal-title').innerText = data.id ? 'Editar Actividad' : 'Nueva Actividad';
+                fields.innerHTML = `
+                    <input type="text" id="f-1" placeholder="Nombre de Actividad" value="${data.nombre || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="text" id="f-2" placeholder="Categoría" value="${data.categoria || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="number" id="f-3" placeholder="Cupo" value="${data.cupo || 20}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                `;
+            } else if (target === 'mysql') {
+                document.getElementById('modal-title').innerText = data.id ? 'Editar Alumno' : 'Nuevo Alumno';
+                fields.innerHTML = `
+                    <input type="text" id="f-1" placeholder="Nombre Completo" value="${data.nombre || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="email" id="f-2" placeholder="Correo Electrónico" value="${data.email || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="text" id="f-3" placeholder="Grado/Curso" value="${data.grado || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                `;
+            } else {
+                document.getElementById('modal-title').innerText = data.id ? 'Editar Profesor' : 'Nuevo Profesor';
+                fields.innerHTML = `
+                    <input type="text" id="f-1" placeholder="Nombre Completo" value="${data.nombre || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="text" id="f-2" placeholder="Especialidad" value="${data.especialidad || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                    <input type="text" id="f-3" placeholder="Departamento" value="${data.departamento || ''}" required class="w-full bg-slate-900 border border-slate-700 p-2.5 rounded text-sm">
+                `;
+            }
+
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        async function saveData(e) {
+            e.preventDefault();
+            const target = document.getElementById('form-target').value;
+            const id = document.getElementById('form-id').value;
+
+            let endpoint = '', payload = {};
+            if (target === 'mariadb') {
+                endpoint = 'mariadb/actividades';
+                payload = { nombre: document.getElementById('f-1').value, categoria: document.getElementById('f-2').value, cupo: parseInt(document.getElementById('f-3').value) };
+            } else if (target === 'mysql') {
+                endpoint = 'mysql/alumnos';
+                payload = { nombre: document.getElementById('f-1').value, email: document.getElementById('f-2').value, grado: document.getElementById('f-3').value };
+            } else {
+                endpoint = 'postgres/profesores';
+                payload = { nombre: document.getElementById('f-1').value, especialidad: document.getElementById('f-2').value, departamento: document.getElementById('f-3').value };
+            }
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_URL}/${endpoint}/${id}` : `${API_URL}/${endpoint}`;
+
+            await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            closeModal();
+            if (target === 'mariadb') loadMariaDB();
+            if (target === 'mysql') loadMySQL();
+            if (target === 'postgres') loadPostgreSQL();
+        }
+
+        async function editItem(target, id) {
+            let endpoint = target === 'mariadb' ? 'mariadb/actividades' : target === 'mysql' ? 'mysql/alumnos' : 'postgres/profesores';
+            const res = await fetch(`${API_URL}/${endpoint}`);
+            const list = await res.json();
+            const item = list.find(x => x.id === id);
+            if (item) openModal(target, item);
+        }
+
+        async function deleteItem(target, endpoint, id) {
+            if (confirm('¿Desea eliminar este registro?')) {
+                await fetch(`${API_URL}/${target}/${endpoint}/${id}`, { method: 'DELETE' });
+                if (target === 'mariadb') loadMariaDB();
+                if (target === 'mysql') loadMySQL();
+                if (target === 'postgres') loadPostgreSQL();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => loadMariaDB());
+    </script>
+</body>
+</html>
